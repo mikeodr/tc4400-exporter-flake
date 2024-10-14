@@ -1,23 +1,17 @@
 { config
-, pkgs
 , lib
+, self
 , ...
 }:
 with lib; let
   cfg = config.services.prometheus.exporters.tc4400_exporter;
   dataDir = "/var/lib/tc4400_exporter";
+  pkg = self.packages.${system}.default;
 in
 {
   options = {
     services.prometheus.exporters.tc4400_exporter = {
       enable = mkEnableOption (lib.mdDoc "Prometheus exporter for the Technicolor TC4400 DOCSIS 3.1 cable modem");
-
-      package = mkOption {
-        default = pkgs.callPackage ../pkgs/tc4400_exporter { };
-        type = types.package;
-        defaultText = literalExpression "pkgs.tc4400_exporter";
-        description = lib.mdDoc "tc4400_exporter derivation to use";
-      };
 
       listenAddress = mkOption {
         default = "0.0.0.0";
@@ -85,7 +79,7 @@ in
       serviceConfig = {
         Restart = "on-failure";
 
-        ExecStart = ''${cfg.package}/bin/tc4400_exporter --web.listen-address="${cfg.listenAddress}:${toString cfg.listenPort}" --web.telemetry-path="${cfg.telemetryPath}" --client.scrape-uri="${cfg.scrapeUri}" --client.timeout="${cfg.timeout}" --log.level="${cfg.logLevel}"'';
+        ExecStart = ''${pkg}/bin/tc4400_exporter --web.listen-address="${cfg.listenAddress}:${toString cfg.listenPort}" --web.telemetry-path="${cfg.telemetryPath}" --client.scrape-uri="${cfg.scrapeUri}" --client.timeout="${cfg.timeout}" --log.level="${cfg.logLevel}"'';
 
         ProtectSystem = "strict";
         ProtectHome = true;
