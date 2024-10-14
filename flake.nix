@@ -47,6 +47,6 @@
 
       defaultPackage = forAllSystems (system: self.packages.${system}.tc4400_exporter);
 
-      nixosModules."tc4400_exporter" = import ./tc400_exporter.nix;
+      nixosModules."tc4400_exporter" = import ./tc4400_exporter.nix;
     };
 }
